@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zoom Room — Guess What You See!</title>
+<style>
+:root{--ink:#29234b;--pink:#ff5fa2;--yellow:#ffd84d;--blue:#6c7cff;--mint:#62e6c4;--paper:#fffaf1}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 5%,#ffe5f1 0,transparent 30%),radial-gradient(circle at 95% 25%,#dff8ff 0,transparent 32%),#fff8df;color:var(--ink);font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;min-height:100vh}
+button,input,select{font:inherit}button{border:0;border-radius:16px;padding:13px 18px;font-weight:900;cursor:pointer;transition:transform .12s,filter .12s;box-shadow:0 4px 0 #29234b22}button:hover{filter:brightness(1.04);transform:translateY(-1px)}button:active{transform:translateY(2px);box-shadow:none}button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.primary{background:var(--pink);color:white}.blue{background:var(--blue);color:white}.yellow{background:var(--yellow);color:var(--ink)}.mint{background:var(--mint);color:var(--ink)}.soft{background:#fff;color:var(--ink);border:2px solid #eee6ff}
+header{max-width:1000px;margin:auto;padding:24px 18px 8px;display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:clamp(1.4rem,4vw,2rem);font-weight:1000;letter-spacing:-1px}.brand span{display:inline-grid;place-items:center;background:var(--yellow);width:42px;height:42px;border-radius:14px;margin-right:7px;transform:rotate(-7deg)}.pill{background:white;border:2px solid #eee6ff;border-radius:999px;padding:8px 12px;font-weight:800;font-size:.85rem}
+main{max-width:850px;margin:14px auto 50px;padding:0 16px}.panel{background:#ffffffd9;border:2px solid white;border-radius:28px;box-shadow:0 14px 40px #54448c12;padding:clamp(18px,4vw,32px)}
+h1{font-size:clamp(2rem,7vw,3.6rem);line-height:.98;letter-spacing:-2px;margin:10px 0 12px}h2{margin:0 0 8px;font-size:1.45rem}.sub{color:#6b6587;line-height:1.5;margin:0 0 20px}.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.field{display:flex;flex-direction:column;gap:7px;flex:1;min-width:135px;font-weight:800;font-size:.9rem}.field input,.field select{border:2px solid #e9e2ff;border-radius:13px;padding:12px;background:white;color:var(--ink);min-width:0;width:100%;outline-color:var(--blue)}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}.section-label{font-size:.78rem;text-transform:uppercase;letter-spacing:1.2px;font-weight:1000;color:#827a9e;margin:20px 0 10px}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.how div{border-radius:16px;padding:13px;background:#fff;border:2px solid #f0eaff}.how b{display:block;margin-bottom:4px}.how span{font-size:.85rem;color:#77708f}
+.hidden{display:none!important}.game-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.progress{height:10px;background:#eee8ff;border-radius:999px;overflow:hidden;margin:12px 0 18px}.progress div{height:100%;background:linear-gradient(90deg,var(--pink),#ffb64d);width:0;transition:width .25s}
+.art-wrap{background:linear-gradient(135deg,#b5eaff,#ffe2f0);border-radius:24px;padding:10px;position:relative;overflow:hidden;border:3px solid white;box-shadow:inset 0 0 0 1px #dcd5ff;min-height:270px;display:grid;place-items:center}
+.art{width:100%;height:clamp(250px,50vw,390px);object-fit:cover;border-radius:16px;transform:scale(1);transition:transform .7s cubic-bezier(.2,.75,.2,1);will-change:transform}
+.zoom-tag{position:absolute;top:16px;left:16px;background:var(--yellow);padding:8px 12px;border-radius:999px;font-weight:1000;box-shadow:0 3px 0 #29234b22}
+.timer{font-size:clamp(1.8rem,6vw,2.6rem);font-weight:1000;font-variant-numeric:tabular-nums}.timer small{font-size:.9rem;color:#7b7498}
+.guess-row{display:flex;gap:8px;margin-top:16px}.guess-row input{flex:1;min-width:0;border:2px solid #e9e2ff;border-radius:15px;padding:14px 15px;outline-color:var(--blue)}
+.status{font-weight:900;min-height:25px;margin-top:12px}.status.good{color:#13886d}.status.bad{color:#d34378}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.controls button{flex:1;min-width:110px}.scoreboard{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.score-card{flex:1;min-width:100px;background:#fff;border:2px solid #f0eaff;border-radius:16px;padding:12px}.score-card small{display:block;color:#807995;font-weight:800}.score-card strong{font-size:1.4rem}
+.answer-card{padding:18px;border-radius:18px;background:#f3fff9;border:2px solid #c9f8e8;margin-top:14px}.answer-card strong{font-size:1.3rem}
+.footer{text-align:center;color:#827a9e;font-size:.8rem;padding:18px}
+@media(max-width:560px){header{padding-top:15px}.setup-grid{grid-template-columns:1fr}.how{grid-template-columns:1fr}.how div{display:flex;gap:10px;align-items:center}.how b{margin:0;min-width:95px}.guess-row{flex-direction:column}.guess-row button{width:100%}.art-wrap{min-height:230px;padding:7px}.art{height:270px}.panel{border-radius:22px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><span>🔎</span>ZOOM ROOM</div><div class="pill">👀 Tiny clues. Big guesses.</div></header>
+<main>
+<section id="setup" class="panel">
+  <div class="pill">🎉 PASS-AND-PLAY PARTY GAME</div>
+  <h1>Can you guess<br>the <span style="color:var(--pink)">big picture?</span></h1>
+  <p class="sub">The picture starts super zoomed in and slowly pulls back. Guess it before everyone else—or before time runs out!</p>
+  <div class="setup-grid">
+    <label class="field">Player 1 name<input id="p1" value="Player 1" maxlength="18"></label>
+    <label class="field">Player 2 name<input id="p2" value="Player 2" maxlength="18"></label>
+    <label class="field">Rounds<select id="rounds"><option>5</option><option selected>8</option><option>10</option><option>12</option></select></label>
+    <label class="field">Time per round<select id="duration"><option value="20">20 seconds (quick!)</option><option value="30" selected>30 seconds</option><option value="45">45 seconds (chill)</option></select></label>
+  </div>
+  <div class="section-label">How to play</div>
+  <div class="how"><div><b>🔍 Look close</b><span>Only a tiny crop at first.</span></div><div><b>💡 Take a guess</b><span>Type or say your answer.</span></div><div><b>🏆 Score points</b><span>Earlier correct guesses earn more.</span></div></div>
+  <button id="start" class="primary" style="width:100%;font-size:1.1rem">Let's play! 🚀</button>
+  <p class="footer">No account needed • Works on mobile • Keep the phone between players</p>
+</section>
+
+<section id="game" class="panel hidden">
+  <div class="game-top"><div class="pill" id="round-label">ROUND 1 / 8</div><div class="timer" id="timer">00:30 <small>left</small></div></div>
+  <div class="progress"><div id="progress"></div></div>
+  <div class="row" style="justify-content:space-between;margin-bottom:12px"><div><h2 id="turn-title">Player 1's turn!</h2><div class="sub" style="margin:0">What do you think this is?</div></div><div class="pill" id="zoom-label">ZOOM × 4.0</div></div>
+  <div class="art-wrap"><div class="zoom-tag" id="clue-tag">🫣 TINY CLUE</div><img id="art" class="art" alt="Mystery picture" src=""></div>
+  <div class="guess-row"><input id="guess" autocomplete="off" placeholder="Type your guess…" aria-label="Your guess"><button id="submit" class="blue">Guess! ✨</button></div>
+  <div id="status" class="status" aria-live="polite"></div>
+  <div class="controls"><button id="reveal" class="yellow">Reveal answer</button><button id="skip" class="soft">Skip →</button><button id="pause" class="soft">Pause</button></div>
+  <div class="scoreboard" id="scoreboard"></div>
+  <div id="answer-card" class="answer-card hidden"></div>
+  <div class="controls hidden" id="after-controls"><button id="next" class="primary">Next round →</button></div>
+</section>
+
+<section id="end" class="panel hidden">
+  <div style="font-size:3rem">🏆🎊🏆</div><h1 id="winner-title">Amazing game!</h1><p class="sub" id="winner-sub">You made it through the rounds.</p>
+  <div id="final-scores" class="scoreboard"></div>
+  <button id="again" class="primary" style="width:100%">Play again 🔁</button>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const puzzles=[
+ {a:"Strawberry",keys:["strawberry","berry"],emoji:"🍓",bg:"#ffb7cf",hint:"A sweet little fruit",shape:"fruit"},
+ {a:"Basketball",keys:["basketball","basket ball","ball"],emoji:"🏀",bg:"#ffd19a",hint:"A sporty sphere",shape:"ball"},
+ {a:"Cactus",keys:["cactus"],emoji:"🌵",bg:"#c7f1bd",hint:"A prickly plant",shape:"plant"},
+ {a:"Pineapple",keys:["pineapple","pine apple"],emoji:"🍍",bg:"#ffe58a",hint:"A tropical fruit",shape:"fruit"},
+ {a:"Ladybug",keys:["ladybug","lady bug","ladybird"],emoji:"🐞",bg:"#ffc5c5",hint:"A tiny garden visitor",shape:"bug"},
+ {a:"Watermelon",keys:["watermelon","melon"],emoji:"🍉",bg:"#b8f1d1",hint:"A juicy summer snack",shape:"fruit"},
+ {a:"Rubber duck",keys:["rubber duck","duck","bath duck"],emoji:"🦆",bg:"#ffe99e",hint:"A bath-time buddy",shape:"toy"},
+ {a:"Planet Saturn",keys:["saturn","planet saturn","planet"],emoji:"🪐",bg:"#c8d1ff",hint:"A ringed world in space",shape:"space"},
+ {a:"Pizza",keys:["pizza"],emoji:"🍕",bg:"#ffd4a5",hint:"A cheesy favourite",shape:"food"},
+ {a:"Butterfly",keys:["butterfly","moth"],emoji:"🦋",bg:"#e6caff",hint:"A colourful flying insect",shape:"bug"},
+ {a:"Panda",keys:["panda"],emoji:"🐼",bg:"#d8eaff",hint:"A black-and-white bear",shape:"animal"},
+ {a:"Mushroom",keys:["mushroom","toadstool"],emoji:"🍄",bg:"#ffc4d8",hint:"A fungus from the forest",shape:"plant"},
+ {a:"Ice cream",keys:["ice cream","icecream","gelato"],emoji:"🍦",bg:"#fbd6ed",hint:"A cold, sweet treat",shape:"food"},
+ {a:"Turtle",keys:["turtle","tortoise"],emoji:"🐢",bg:"#c6f0c5",hint:"A slow animal with a shell",shape:"animal"},
+ {a:"Lemon",keys:["lemon"],emoji:"🍋",bg:"#fff19c",hint:"A sour yellow citrus fruit",shape:"fruit"},
+ {a:"Crown",keys:["crown","king crown"],emoji:"👑",bg:"#ffe2a3",hint:"Something a monarch might wear",shape:"object"}
+];
+let players=[],scores=[],roundOrder=[],roundIndex=0,turn=0,seconds=30,remaining=30,tick=null,paused=false,locked=false,seen=new Set(),total=8;
+function svgFor(p){let bg=p.bg,emoji=p.emoji;return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" rx="40" fill="${bg}"/><circle cx="130" cy="100" r="70" fill="#ffffff" opacity=".28"/><circle cx="690" cy="480" r="110" fill="#ffffff" opacity=".22"/><path d="M0 500 Q180 450 350 515 T800 490 V600 H0Z" fill="#ffffff" opacity=".28"/><text x="400" y="380" text-anchor="middle" font-size="280" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">${emoji}</text><text x="400" y="540" text-anchor="middle" font-size="24" font-weight="bold" fill="#29234b" opacity=".35">ZOOM ROOM</text></svg>`)}`}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function norm(s){return s.toLowerCase().trim().replace(/[^a-z0-9 ]/g,"").replace(/\s+/g," ")}
+function current(){return puzzles[roundOrder[roundIndex]]}
+function startGame(){players=[$("p1").value.trim()||"Player 1",$("p2").value.trim()||"Player 2"];scores=[0,0];total=+ $("rounds").value;seconds=+$("duration").value;remaining=seconds;roundOrder=shuffle(puzzles).slice(0,total);roundIndex=0;turn=0;seen.clear();$("setup").classList.add("hidden");$("end").classList.add("hidden");$("game").classList.remove("hidden");renderScores();loadRound()}
+function renderScores(){$("scoreboard").innerHTML=players.map((p,i)=>`<div class="score-card"><small>${escapeHtml(p)}</small><strong>⭐ ${scores[i]} pts</strong></div>`).join("")}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function loadRound(){clearInterval(tick);paused=false;locked=false;remaining=seconds;turn=roundIndex%2;$("round-label").textContent=`ROUND ${roundIndex+1} / ${total}`;$("turn-title").textContent=`${players[turn]}'s turn!`;$("art").src=svgFor(current());$("art").style.transform="scale(4.3)";$("zoom-label").textContent="ZOOM × 4.3";$("clue-tag").textContent="🫣 TINY CLUE";$("guess").value="";$("guess").disabled=false;$("submit").disabled=false;$("status").textContent="";$("status").className="status";$("answer-card").classList.add("hidden");$("after-controls").classList.add("hidden");$("reveal").disabled=false;$("skip").disabled=false;$("pause").textContent="Pause";updateTimer();tick=setInterval(()=>{if(!paused&&!locked){remaining=Math.max(0,remaining-0.1);updateTimer();updateZoom();if(remaining<=0)finish(false,"Time's up! ⏰")}},100)}
+function updateTimer(){$("timer").innerHTML=`00:${String(Math.ceil(remaining)).padStart(2,"0")} <small>left</small>`;$("progress").style.width=`${100*(1-remaining/seconds)}%`}
+function updateZoom(){let ratio=remaining/seconds;let scale=1+3.3*ratio;$("art").style.transform=`scale(${scale})`;$("zoom-label").textContent=`ZOOM × ${scale.toFixed(1)}`;$("clue-tag").textContent=ratio>.66?"🫣 TINY CLUE":ratio>.33?"👀 GETTING CLOSER":"💡 ALMOST THERE"}
+function submitGuess(){if(locked||paused)return;let g=norm($("guess").value);if(!g){$("status").textContent="Type a guess first!";$("status").className="status bad";return}let p=current();let correct=p.keys.some(k=>norm(k)===g)||norm(p.a)===g;if(correct){let points=Math.max(10,Math.ceil(100*remaining/seconds));scores[turn]+=points;renderScores();finish(true,`Correct, ${players[turn]}! 🎉 +${points} points`)}else{$("status").textContent="Not quite! Try another guess 😄";$("status").className="status bad";$("guess").select()}}
+function finish(correct,msg){if(locked)return;locked=true;clearInterval(tick);$("art").style.transform="scale(1)";$("zoom-label").textContent="ZOOM × 1.0";$("clue-tag").textContent="🎉 REVEALED";$("guess").disabled=true;$("submit").disabled=true;$("reveal").disabled=true;$("skip").disabled=true;$("pause").disabled=true;$("status").textContent=msg;$("status").className="status "+(correct?"good":"bad");$("answer-card").classList.remove("hidden");$("answer-card").innerHTML=`<div style="font-size:2.4rem">${current().emoji}</div><strong>${current().a}</strong><div style="color:#6b6587;margin-top:4px">${current().hint}</div>`;$("after-controls").classList.remove("hidden");$("next").textContent=roundIndex===total-1?"See final scores 🏆":"Next round →";renderScores()}
+function nextRound(){roundIndex++;if(roundIndex>=total){showEnd();return}loadRound()}
+function showEnd(){clearInterval(tick);$("game").classList.add("hidden");$("end").classList.remove("hidden");let order=[0,1].sort((a,b)=>scores[b]-scores[a]);let tie=scores[0]===scores[1];$("winner-title").textContent=tie?"It's a tie! 🤝":`${players[order[0]]} wins! 🏆`;$("winner-sub").textContent=tie?"You're both Zoom Room champions.":`${players[order[0]]} takes the crown. Rematch?`;$("final-scores").innerHTML=players.map((p,i)=>`<div class="score-card"><small>${escapeHtml(p)}</small><strong>⭐ ${scores[i]} pts</strong></div>`).join("")}
+$("start").addEventListener("click",startGame);$("submit").addEventListener("click",submitGuess);$("guess").addEventListener("keydown",e=>{if(e.key==="Enter")submitGuess()});$("reveal").addEventListener("click",()=>finish(false,`Answer revealed! ${players[turn]} gets no points.`));$("skip").addEventListener("click",()=>finish(false,"Skipped! Here's the answer."));$("next").addEventListener("click",nextRound);$("again").addEventListener("click",()=>{$("end").classList.add("hidden");$("setup").classList.remove("hidden")});$("pause").addEventListener("click",()=>{if(locked)return;paused=!paused;$("pause").textContent=paused?"Resume":"Pause";$("status").textContent=paused?"Game paused — take your time.":"Back in the game!";$("status").className="status";$("guess").disabled=paused;$("submit").disabled=paused});
+</script>
+</body>
+</html>
